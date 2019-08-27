@@ -1,7 +1,16 @@
 {
+  "name": "eventful-api-test-page",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alicia Livingston",
+  "license": "ISC",
   "dependencies": {
     "eventful-node": "^1.1.1",
-    "inquirer": "^5.2.0",
-    "pg": "^11.2.0"
+    "inquirer": "^7.0.0",
+    "pg": "^7.12.1"
   }
-}s
+}
