@@ -71,7 +71,8 @@ app.completeSentence = continueCallback => {
 };
 
 app.createNewUser = continueCallback => {
-  console.log('Please answer the following questions');
+  console.log('Please answer the following questions')
+  //YOUR WORK HERE
   const questions = [
     {
       message: "Please enter your first and last name?",
@@ -91,14 +92,13 @@ app.createNewUser = continueCallback => {
   ];
   inquirer.prompt(questions).then(result => {
 
-    connection.query('SELECT * FROM users',  (err, res) => {
-      if (err) {
-        throw err
-      }
-      console.log('user:', res.rows[0])
-    })
+    // connection.query('SELECT * FROM users',  (err, res) => {
+    //   if (err) {
+    //     throw err
+    //   }
+    //   console.log('user:', res.rows[0])
+    // })
 
-    console.log(result)
     connection.query('INSERT INTO users (name, email, age) VALUES($1, $2, $3 )', [result.name, result.email, result.age],  (err, res) => {
       if (err) {
         throw err
@@ -114,14 +114,30 @@ app.createNewUser = continueCallback => {
 app.searchEventful = continueCallback => {
   const questions = [
     {
-      message: "What is your name?",
+      message: "What is the search keywords?",
       type: "input",
-      name: "name"
-    }
+      name: "keyword",
+      default: "tango" 
+    },
+    {
+      message: "What is the location?",
+      type: "input",
+      name: "location",
+      default: "San Francisco" 
 
-  console.log("Please write code for this function");
+    },
+    {
+      message: "What is the date?",
+      type: "input",
+      name: "date",
+      default: "Next Week" 
+    }
+  ]
+  inquirer.prompt(questions).then(res => {
+  console.log([continueCallback]);
   //End of your work
   continueCallback();
+  })
 };
 
 app.matchUserWithEvent = continueCallback => {

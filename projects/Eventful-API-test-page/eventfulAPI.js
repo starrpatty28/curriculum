@@ -25,6 +25,7 @@ client.searchEvents({
 
  //export a custom function that searches via Eventful API, displays the results AND stores some of the data into MySQL
 module.exports = function(optionsObj){
+
   // YOUR WORK HERE
   console.log("You need to create this functionality yourself")
 }
