@@ -72,12 +72,29 @@ app.completeSentence = continueCallback => {
 
 app.createNewUser = continueCallback => {
   //YOUR WORK HERE
-  
-
-  console.log("Please write code for this function");
+  const questions = [
+    {
+      message: "What is your name?",
+      type: "input",
+      name: "name"
+    },
+    {
+      message: "What is your email?",
+      type: "input",
+      name: "email"
+    },
+    {
+      message: "What is your age?",
+      type: "input",
+      name: "age"
+    }
+  ];
+  inquirer.prompt(questions).then(res => {
+    console.log(res);
+    continueCallback(); 
+  })
   //End of your work
-  continueCallback();
-};
+ };
 
 app.searchEventful = continueCallback => {
   //YOUR WORK HERE

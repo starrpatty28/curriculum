@@ -1,5 +1,8 @@
+const pg = require('pg');
 const connection = require('./connection');
 const app = require('./app');
+
+
 
  const pgConnect = () => {
   connection.connect((err) =>{
@@ -15,3 +18,4 @@ const app = require('./app');
  // *Uncomment below line once you have mySQL setup
 
  pgConnect();
+
