@@ -71,10 +71,10 @@ app.completeSentence = continueCallback => {
 };
 
 app.createNewUser = continueCallback => {
-  //YOUR WORK HERE
+  console.log('Please answer the following questions');
   const questions = [
     {
-      message: "What is your name?",
+      message: "Please enter your first and last name?",
       type: "input",
       name: "name"
     },
@@ -91,12 +91,12 @@ app.createNewUser = continueCallback => {
   ];
   inquirer.prompt(questions).then(result => {
 
-    // connection.query('SELECT * FROM users',  (err, res) => {
-    //   if (err) {
-    //     throw err
-    //   }
-    //   console.log('user:', res.rows[0])
-    // })
+    connection.query('SELECT * FROM users',  (err, res) => {
+      if (err) {
+        throw err
+      }
+      console.log('user:', res.rows[0])
+    })
 
     console.log(result)
     connection.query('INSERT INTO users (name, email, age) VALUES($1, $2, $3 )', [result.name, result.email, result.age],  (err, res) => {
@@ -110,8 +110,14 @@ app.createNewUser = continueCallback => {
   //End of your work
  };
 
+
 app.searchEventful = continueCallback => {
-  //YOUR WORK HERE
+  const questions = [
+    {
+      message: "What is your name?",
+      type: "input",
+      name: "name"
+    }
 
   console.log("Please write code for this function");
   //End of your work
