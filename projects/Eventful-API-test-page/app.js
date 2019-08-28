@@ -89,8 +89,22 @@ app.createNewUser = continueCallback => {
       name: "age"
     }
   ];
-  inquirer.prompt(questions).then(res => {
-    console.log(res);
+  inquirer.prompt(questions).then(result => {
+
+    // connection.query('SELECT * FROM users',  (err, res) => {
+    //   if (err) {
+    //     throw err
+    //   }
+    //   console.log('user:', res.rows[0])
+    // })
+
+    console.log(result)
+    connection.query('INSERT INTO users (name, email, age) VALUES($1, $2, $3 )', [result.name, result.email, result.age],  (err, res) => {
+      if (err) {
+        throw err
+      }
+      console.log('user:', res.rows[0])
+    })
     continueCallback(); 
   })
   //End of your work
