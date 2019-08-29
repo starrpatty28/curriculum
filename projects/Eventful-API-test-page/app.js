@@ -1,6 +1,12 @@
+require('dotenv').config()
+const eventfulNode = require('eventful-node');
+const client = new eventfulNode.Client(process.env.SECRET_KEY);
+//const env = process.env.SECRET_KEY;
 const inquirer = require("inquirer");
 //connection available to all
 const connection = require("./connection");
+
+//console.log('my api' + env);
 
 const app = {};
 
@@ -112,33 +118,67 @@ app.createNewUser = continueCallback => {
 
 
 app.searchEventful = continueCallback => {
-  const questions = [
-    {
-      message: "What is the search keywords?",
-      type: "input",
-      name: "keyword",
-      default: "tango" 
-    },
-    {
-      message: "What is the location?",
-      type: "input",
-      name: "location",
-      default: "San Francisco" 
-
-    },
-    {
-      message: "What is the date?",
-      type: "input",
-      name: "date",
-      default: "Next Week" 
-    }
-  ]
-  inquirer.prompt(questions).then(res => {
-  console.log([continueCallback]);
-  //End of your work
-  continueCallback();
+  inquirer.prompt({
+    type: "input",
+    name: "keyword",
+    message: "What type of event would you like to view in San Francisco?"
   })
-};
+  .then( answer => {
+    const { keyword } = answer;
+    client.searchEvents(
+      {
+        keywords: keyword,
+        location: "San Francisco",
+        date: "Future"
+      },
+      (err, data) => {
+        if (err) {
+          return console.error(err);
+        }
+        eventResult = data.search.events.event[0];
+        console.log(
+          "This event next week that matches your keyword:"
+        );
+        console.log("title: ", eventResult.title);
+        console.log("start_time: ", eventResult.start_time);
+        console.log("venue_name: ", eventResult.venue_name);
+        console.log("venue_address: ", eventResult.venue_address);
+       inquirer.prompt([
+        {
+        type: "list",
+        name: "yesorno",
+        message: "Would you like to save this event?",
+        choices: ["yes","no"],
+        },
+      ]).then( answer => {
+        console.log("You picked: ", answer.yesorno);
+        if (answer.yesorno === "no"){
+          
+          app.searchEventful(continueCallback); 
+        } else{
+          connection.query('INSERT INTO events (title,start_time, venue_name, venue_address) VALUES($1, $2, $3, $4 )', [eventResult.title, eventResult.start_time, eventResult.venue_name, eventResult.venue_address], (err, res) => {
+            if(err) {
+              throw err
+            }
+          console.log('event: ', res)
+          continueCallback();
+
+        }) 
+        }
+      })
+      }
+    );
+  })
+  //  console.log('Please write code for this function');
+  //End of your work
+ } 
+
+//   inquirer.prompt(questions).then(res => {
+//   console.log([continueCallback]);
+//   //End of your work
+//   continueCallback();
+//   })
+// };
 
 app.matchUserWithEvent = continueCallback => {
   //YOUR WORK HERE
@@ -165,3 +205,4 @@ app.seeUsersOfOneEvent = continueCallback => {
 };
 
 module.exports = app;
+

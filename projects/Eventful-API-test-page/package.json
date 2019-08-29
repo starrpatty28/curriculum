@@ -9,6 +9,7 @@
   "author": "Alicia Livingston",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^8.1.0",
     "eventful-node": "^1.1.1",
     "inquirer": "^7.0.0",
     "pg": "^7.12.1"
