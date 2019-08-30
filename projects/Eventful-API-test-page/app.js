@@ -47,8 +47,7 @@ app.startQuestion = closeConnectionCallback => {
       )
         app.seeUsersOfOneEvent(continueCallback);
       if (res.action === "Exit") {
-        closeConnectionCallback();
-        return;
+        app.closeConnectionCallback();
       }
     });
 };
@@ -72,8 +71,6 @@ app.completeSentence = continueCallback => {
     console.log('My favorite color is, ' + res.color + ' so my dream is to buy a ' + res.color + " " + res.item);
     continueCallback();
   });
-
-  //End of your work;
 };
 
 app.createNewUser = continueCallback => {
@@ -109,7 +106,7 @@ app.createNewUser = continueCallback => {
       if (err) {
         throw err
       }
-      console.log('user:', res.rows[0])
+      //console.log('user:', res.rows[0])
     })
     continueCallback(); 
   })
@@ -151,7 +148,7 @@ app.searchEventful = continueCallback => {
         choices: ["yes","no"],
         },
       ]).then( answer => {
-        console.log("You picked: ", answer.yesorno);
+        //console.log("You picked: ", answer.yesorno);
         if (answer.yesorno === "no"){
           
           app.searchEventful(continueCallback); 
@@ -160,7 +157,7 @@ app.searchEventful = continueCallback => {
             if(err) {
               throw err
             }
-          console.log('event: ', res)
+         //console.log('Your event has been saved, yayy!!')
           continueCallback();
 
         }) 
@@ -182,27 +179,148 @@ app.searchEventful = continueCallback => {
 
 app.matchUserWithEvent = continueCallback => {
   //YOUR WORK HERE
-
-  console.log("Please write code for this function");
-  //End of your work
-  continueCallback();
+  const eventTitles = connection.query(
+    "SELECT title FROM events",
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      let resultsArray = results.rows.map(object => object.title);
+    }
+  );
+  let currentUserid = 0;
+  inquirer
+    .prompt({
+      type: "input",
+      name: "name",
+      message: "Which user are you? Please give your name:"
+    })
+    .then(answer => {
+      const { name } = answer;
+      connection.query(
+        "SELECT * FROM users WHERE name=$1",
+        [name],
+        (error, results) => {
+          if (error) {
+            throw error;
+          }
+          if (results === null) {
+            console.log(`I'm sorry, no such user exists.`);
+            //continueCallback();
+          }
+          currentUserid = results.rows[0].userid;
+        }
+      );
+    })
+    .then(() => {
+      inquirer
+        .prompt({
+          type: "input",
+          name: "eventid",
+          message:
+            "Which event would you like to save to your profile? Please give an eventid:"
+        })
+        .then(answer => {
+          const { eventid } = answer;
+          connection.query(
+            "INSERT INTO users_events (userid, eventid) VALUES ($1, $2)",
+            [currentUserid, eventid],
+            (error, results) => {
+              if (error) {
+                throw error;
+               }
+               console.log('Your event has been saved!')
+              if (results === null) {
+                console.log("No such event exists");
+              }
+              continueCallback();
+            }
+          );
+        });
+    });
 };
 
 app.seeEventsOfOneUser = continueCallback => {
   //YOUR WORK HERE
-
-  console.log("Please write code for this function");
-  //End of your work
-  continueCallback();
+  inquirer
+    .prompt({
+      type: "input",
+      name: "name",
+      message:
+        "Which user's events would you like to see? Please give your userid:"
+    })
+    .then(answer => {
+      const { name } = answer;
+      connection.query(
+        "SELECT title FROM events INNER JOIN users_events ON events.eventid = users_events.eventid WHERE users_events.userid=$1",
+        [name],
+        (error, results) => {
+          if (error) {
+            throw error;
+          }
+          if (results === null) {
+            console.log(`I'm sorry, no such user exists.`);
+            continueCallback();
+          }
+          return results.rows.map(object => {
+            console.log(`**${object.title}**`);
+            continueCallback();
+          });
+        }
+      );
+    });
 };
 
 app.seeUsersOfOneEvent = continueCallback => {
   //YOUR WORK HERE
-
-  console.log("Please write code for this function");
-  //End of your work
-  continueCallback();
+  inquirer
+    .prompt({
+      type: "input",
+      name: "eventid",
+      message:
+        "Which event attendees would you like to see? Please give an eventid:"
+    })
+    .then(answer => {
+      const { eventid } = answer;
+      connection.query(
+        "SELECT name FROM users INNER JOIN users_events ON users.userid = users_events.userid WHERE users_events.eventid=$1",
+        [eventid],
+        (error, results) => {
+          if (error) {
+            throw error;
+          }
+          if (results === null) {
+            console.log(`I'm sorry, no such event exists.`);
+            continueCallback();
+          }
+          return results.rows.map(object => {
+            console.log(`**${object.name}**`);
+            continueCallback();
+          });
+        }
+      );
+    });
+  //continueCallback();
 };
+
+app.closeConnectionCallback = () => {
+  console.log(`
+ ________  __                            __              __      __                    __ 
+|        \\|  \\                          |  \\            |  \\    /  \\                  |  \\
+ \\$$$$$$$$| $$____    ______   _______  | $$   __        \\$$\\  /  $$______   __    __ | $$
+   | $$   | $$    \\  |      \\ |       \\ | $$  /  \\        \\$$\\/  $$/      \\ |  \\  |  \\| $$
+   | $$   | $$$$$$$\\  \\$$$$$$\\| $$$$$$$\\| $$_/  $$         \\$$  $$|  $$$$$$\\| $$  | $$| $$
+   | $$   | $$  | $$ /      $$| $$  | $$| $$   $$           \\$$$$ | $$  | $$| $$  | $$ \\$$
+   | $$   | $$  | $$|  $$$$$$$| $$  | $$| $$$$$$\\           | $$  | $$__/ $$| $$__/ $$ __ 
+   | $$   | $$  | $$ \\$$    $$| $$  | $$| $$  \\$$\\          | $$   \\$$    $$ \\$$    $$|  \\
+    \\$$    \\$$   \\$$  \\$$$$$$$ \\$$   \\$$ \\$$   \\$$           \\$$    \\$$$$$$   \\$$$$$$  \\$$
+                                                                                          
+                                                                                          
+                                                                                          
+`);
+  process.exitCode = 0;
+  process.exit();
+}
 
 module.exports = app;
 
