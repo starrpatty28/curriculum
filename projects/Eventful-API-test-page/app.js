@@ -1,10 +1,10 @@
 require('dotenv').config()
 const eventfulNode = require('eventful-node');
 const client = new eventfulNode.Client(process.env.SECRET_KEY);
-//const env = process.env.SECRET_KEY;
 const inquirer = require("inquirer");
-//connection available to all
 const connection = require("./connection");
+//const eventfulAPI = require('./eventfulAPI.js');
+
 
 //console.log('my api' + env);
 

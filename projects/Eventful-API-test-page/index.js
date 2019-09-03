@@ -34,10 +34,11 @@ const app = require('./app');
                                                                                                           
                                                                                                           
    `)
-    console.log('Welcome to Eventonica')
-    console.log("connected as Administrator");
+   app.startQuestion(()=>{ connection.end() });
 
-     app.startQuestion(()=>{ connection.end() });
+    //console.log('Welcome to Eventonica')
+    //console.log("connected as Administrator");
+
   })
 }
 
